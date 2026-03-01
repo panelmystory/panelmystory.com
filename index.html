@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel My Story — Turn Your Memories Into Comics</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #1a1a1a;
+      --cream: #faf7f0;
+      --warm: #f5efe0;
+      --yellow: #f7c948;
+      --red: #e8392a;
+      --blue: #2a4dd4;
+      --panel-border: 3px solid var(--ink);
+      --shadow: 6px 6px 0px var(--ink);
+      --shadow-lg: 10px 10px 0px var(--ink);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--cream); color: var(--ink); font-family: 'DM Sans', sans-serif; overflow-x: hidden; }
+    body::before { content: ''; position: fixed; inset: 0; background-image: radial-gradient(circle, rgba(0,0,0,0.06) 1px, transparent 1px); background-size: 8px 8px; pointer-events: none; z-index: 0; }
+
+    /* NAV */
+    nav { position: fixed; top: 0; width: 100%; z-index: 100; background: var(--cream); border-bottom: var(--panel-border); padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .nav-logo { font-family: 'Bangers', cursive; font-size: 28px; letter-spacing: 2px; color: var(--ink); text-decoration: none; }
+    .nav-logo span { color: var(--red); }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a { font-size: 14px; font-weight: 600; text-decoration: none; color: var(--ink); transition: color 0.2s; }
+    .nav-links a:hover { color: var(--red); }
+    .nav-cta { background: var(--red); color: var(--cream) !important; padding: 10px 20px; border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); transition: transform 0.15s, box-shadow 0.15s !important; }
+    .nav-cta:hover { transform: translate(-2px,-2px); box-shadow: 5px 5px 0 var(--ink) !important; }
+
+    /* HERO */
+    .hero { min-height: 100vh; padding: 120px 40px 80px; display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+    .hero-left { animation: slideInLeft 0.7s ease forwards; }
+    .hero-right { animation: slideInRight 0.7s ease 0.2s both; position: relative; display: flex; justify-content: center; align-items: center; }
+    @keyframes slideInLeft { from { opacity:0; transform:translateX(-40px); } to { opacity:1; transform:translateX(0); } }
+    @keyframes slideInRight { from { opacity:0; transform:translateX(40px); } to { opacity:1; transform:translateX(0); } }
+    .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: var(--yellow); border: 2px solid var(--ink); padding: 6px 14px; font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 24px; box-shadow: 3px 3px 0 var(--ink); }
+    .hero-badge::before { content: '★'; font-size: 14px; }
+    h1 { font-family: 'Bangers', cursive; font-size: clamp(60px,7vw,96px); line-height: 0.95; letter-spacing: 3px; margin-bottom: 28px; }
+    h1 .line-red { color: var(--red); }
+    h1 .line-blue { color: var(--blue); }
+    .hero-sub { font-size: 18px; line-height: 1.6; color: #444; font-weight: 300; max-width: 480px; margin-bottom: 40px; }
+    .hero-sub strong { color: var(--ink); font-weight: 600; }
+    .hero-buttons { display: flex; gap: 16px; flex-wrap: wrap; }
+
+    /* HERO FRAME */
+    .hero-comic-frame { position: relative; width: 100%; max-width: 420px; }
+    .hero-comic-frame::before { content: ''; position: absolute; inset: 0; background: var(--yellow); border: var(--panel-border); transform: rotate(3deg) translate(10px,10px); z-index: 0; }
+    .hero-comic-frame::after { content: ''; position: absolute; inset: 0; background: var(--blue); border: var(--panel-border); transform: rotate(-2deg) translate(-8px,8px); z-index: 0; }
+    .hero-cover-img { position: relative; z-index: 1; width: 100%; display: block; border: var(--panel-border); box-shadow: var(--shadow-lg); transition: transform 0.3s ease; }
+    .hero-cover-img:hover { transform: scale(1.02) rotate(-0.5deg); }
+    .hero-cover-tag { position: absolute; bottom: -16px; left: 50%; transform: translateX(-50%); z-index: 2; background: var(--red); color: var(--cream); font-family: 'Bangers', cursive; font-size: 14px; letter-spacing: 2px; padding: 6px 20px; border: 2px solid var(--ink); box-shadow: 3px 3px 0 var(--ink); white-space: nowrap; }
+    .sfx-float { position: absolute; font-family: 'Bangers', cursive; border: 2px solid var(--ink); padding: 4px 10px; font-size: 16px; letter-spacing: 1px; z-index: 3; box-shadow: 2px 2px 0 var(--ink); animation: sfxBounce 2.5s ease-in-out infinite; }
+    .sfx-1 { top: 10%; right: -20px; background: var(--yellow); animation-delay: 0s; }
+    .sfx-2 { top: 40%; left: -24px; background: var(--red); color: white; animation-delay: 0.8s; }
+    .sfx-3 { bottom: 15%; right: -16px; background: var(--blue); color: white; animation-delay: 1.4s; }
+    @keyframes sfxBounce { 0%,100% { transform:translateY(0); } 50% { transform:translateY(-6px); } }
+
+    /* BUTTONS */
+    .btn-primary { background: var(--red); color: var(--cream); padding: 16px 32px; font-size: 16px; font-weight: 700; border: var(--panel-border); box-shadow: var(--shadow); cursor: pointer; text-decoration: none; display: inline-block; transition: transform 0.15s, box-shadow 0.15s; }
+    .btn-primary:hover { transform: translate(-3px,-3px); box-shadow: var(--shadow-lg); }
+    .btn-secondary { background: transparent; color: var(--ink); padding: 16px 32px; font-size: 16px; font-weight: 600; border: var(--panel-border); box-shadow: var(--shadow); cursor: pointer; text-decoration: none; display: inline-block; transition: transform 0.15s, box-shadow 0.15s, background 0.15s; }
+    .btn-secondary:hover { background: var(--yellow); transform: translate(-3px,-3px); box-shadow: var(--shadow-lg); }
+
+    /* SECTIONS */
+    .section { padding: 100px 40px; max-width: 1200px; margin: 0 auto; position: relative; z-index: 1; }
+    .section-header { text-align: center; margin-bottom: 64px; }
+    .section-label { font-size: 12px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--red); margin-bottom: 12px; }
+    h2 { font-family: 'Bangers', cursive; font-size: clamp(40px,5vw,64px); letter-spacing: 2px; line-height: 1; }
+    .section-sub { font-size: 17px; color: #555; margin-top: 16px; font-weight: 300; }
+
+    /* STEPS */
+    .steps-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 2px; border: var(--panel-border); }
+    .step { background: white; padding: 40px 32px; position: relative; transition: background 0.2s; }
+    .step:not(:last-child) { border-right: var(--panel-border); }
+    .step:hover { background: var(--warm); }
+    .step-number { font-family: 'Bangers', cursive; font-size: 72px; color: var(--yellow); -webkit-text-stroke: 3px var(--ink); line-height: 1; margin-bottom: 16px; }
+    .step h3 { font-family: 'Bangers', cursive; font-size: 28px; letter-spacing: 1px; margin-bottom: 12px; }
+    .step p { font-size: 15px; line-height: 1.6; color: #555; font-weight: 300; }
+    .step-icon { position: absolute; top: 16px; right: 16px; font-size: 32px; }
+
+    /* PRODUCTS */
+    .products-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+    .product-card { border: var(--panel-border); box-shadow: var(--shadow); background: white; overflow: hidden; transition: transform 0.15s, box-shadow 0.15s; position: relative; display: flex; flex-direction: column; }
+    .product-card:hover { transform: translate(-4px,-4px); box-shadow: var(--shadow-lg); }
+    .product-card .product-footer { margin-top: auto; }
+    .product-tag { position: absolute; top: 16px; right: -8px; background: var(--red); color: white; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; padding: 4px 12px; border: 2px solid var(--ink); }
+    .product-header { padding: 32px 28px 24px; border-bottom: var(--panel-border); }
+    .product-icon { font-size: 40px; margin-bottom: 12px; }
+    .product-header h3 { font-family: 'Bangers', cursive; font-size: 28px; letter-spacing: 1px; margin-bottom: 8px; }
+    .product-header p { font-size: 14px; color: #666; font-weight: 300; line-height: 1.5; }
+    .product-price { padding: 20px 28px; display: flex; align-items: baseline; gap: 6px; border-bottom: var(--panel-border); }
+    .price-amount { font-family: 'Bangers', cursive; font-size: 52px; letter-spacing: 1px; line-height: 1; }
+    .price-label { font-size: 13px; color: #888; }
+    .product-features { padding: 20px 28px; list-style: none; }
+    .product-features li { padding: 6px 0; font-size: 14px; color: #444; display: flex; align-items: center; gap: 10px; }
+    .product-features li::before { content: '✓'; font-weight: 700; color: var(--blue); font-size: 16px; flex-shrink: 0; }
+    .product-footer { padding: 20px 28px; }
+    .btn-full { display: block; width: 100%; text-align: center; background: var(--ink); color: var(--cream); padding: 14px; font-size: 14px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; border: 2px solid var(--ink); cursor: pointer; text-decoration: none; transition: background 0.15s; }
+    .btn-full:hover { background: var(--red); border-color: var(--red); }
+    .btn-full.featured-btn { background: var(--red); border-color: var(--red); }
+    .btn-full.featured-btn:hover { background: var(--ink); border-color: var(--ink); }
+
+    /* STYLES STRIP */
+    .styles-strip { background: var(--ink); padding: 80px 40px; position: relative; z-index: 1; }
+    .styles-strip .section-label { color: var(--yellow); }
+    .styles-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; max-width: 1200px; margin: 0 auto; }
+    .style-card { border: 2px solid rgba(255,255,255,0.2); padding: 28px 20px; text-align: center; transition: border-color 0.2s, background 0.2s, transform 0.15s; }
+    .style-card:hover { border-color: var(--yellow); background: rgba(247,201,72,0.1); transform: translateY(-4px); }
+    .style-card-emoji { font-size: 40px; margin-bottom: 16px; }
+    .style-card h4 { font-family: 'Bangers', cursive; font-size: 22px; letter-spacing: 2px; color: var(--cream); margin-bottom: 8px; }
+    .style-card p { font-size: 13px; color: #aaa; font-weight: 300; line-height: 1.5; }
+    .style-dot { width: 10px; height: 10px; border-radius: 50%; margin: 12px auto 0; }
+
+    /* ================================
+       PURE CSS CAROUSEL
+       Radio inputs sit as siblings of
+       .carousel-wrap inside .sample-inner
+       ================================ */
+    #s1:checked ~ .carousel-wrap .css-track { transform: translateX(0%); }
+    #s2:checked ~ .carousel-wrap .css-track { transform: translateX(-16.6667%); }
+    #s3:checked ~ .carousel-wrap .css-track { transform: translateX(-33.3333%); }
+    #s4:checked ~ .carousel-wrap .css-track { transform: translateX(-50%); }
+    #s5:checked ~ .carousel-wrap .css-track { transform: translateX(-66.6667%); }
+    #s6:checked ~ .carousel-wrap .css-track { transform: translateX(-83.3333%); }
+
+    #s1:checked ~ .carousel-wrap .dot-1,
+    #s2:checked ~ .carousel-wrap .dot-2,
+    #s3:checked ~ .carousel-wrap .dot-3,
+    #s4:checked ~ .carousel-wrap .dot-4,
+    #s5:checked ~ .carousel-wrap .dot-5 { background: var(--red); transform: scale(1.3); }
+    #s6:checked ~ .carousel-wrap .dot-6 { background: var(--red); transform: scale(1.3); }
+
+    .css-nav label { display: none; }
+    #s1:checked ~ .carousel-wrap .nav-s1 { display: flex; }
+    #s2:checked ~ .carousel-wrap .nav-s2 { display: flex; }
+    #s3:checked ~ .carousel-wrap .nav-s3 { display: flex; }
+    #s4:checked ~ .carousel-wrap .nav-s4 { display: flex; }
+    #s5:checked ~ .carousel-wrap .nav-s5 { display: flex; }
+    #s6:checked ~ .carousel-wrap .nav-s6 { display: flex; }
+
+    .carousel-wrap { border: var(--panel-border); box-shadow: var(--shadow-lg); background: white; overflow: hidden; }
+    .carousel-strip { background: var(--blue); padding: 10px 20px; font-family: 'Bangers', cursive; color: white; letter-spacing: 2px; font-size: 13px; border-bottom: var(--panel-border); text-align: center; }
+    .carousel-stage { overflow: hidden; border-bottom: var(--panel-border); background: #111; }
+    .css-track { display: flex; width: 600%; transition: transform 0.45s cubic-bezier(0.25,0.46,0.45,0.94); }
+    .css-slide { width: 16.6667%; position: relative; flex-shrink: 0; }
+    .css-slide img { width: 100%; height: auto; display: block; max-height: 400px; object-fit: contain; background: #1a1a1a; }
+    .slide-label { position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.72); color: white; font-family: 'Bangers', cursive; font-size: 14px; letter-spacing: 2px; padding: 6px 16px; text-align: center; }
+    .css-nav { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-bottom: var(--panel-border); background: var(--cream); }
+    .css-nav label { background: var(--ink); color: white; border: 2px solid var(--ink); width: 38px; height: 38px; font-size: 20px; cursor: pointer; align-items: center; justify-content: center; box-shadow: 2px 2px 0 rgba(0,0,0,0.3); transition: background 0.15s; user-select: none; flex-shrink: 0; line-height: 1; }
+    .css-nav label:hover { background: var(--red); border-color: var(--red); }
+    .css-dots { display: flex; gap: 8px; align-items: center; }
+    .css-dot { width: 11px; height: 11px; border-radius: 50%; background: #ccc; border: 2px solid var(--ink); cursor: pointer; display: block; transition: background 0.2s, transform 0.2s; }
+    .carousel-footer { background: var(--ink); padding: 8px 20px; font-family: 'Bangers', cursive; color: var(--cream); font-size: 12px; letter-spacing: 2px; text-align: center; }
+
+    /* SAMPLE SECTION */
+    .sample-section { padding: 100px 40px; background: var(--warm); border-top: var(--panel-border); border-bottom: var(--panel-border); position: relative; z-index: 1; }
+    .sample-inner { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+    .sample-text h2 { margin-bottom: 20px; }
+    .sample-text p { font-size: 17px; line-height: 1.7; color: #555; font-weight: 300; margin-bottom: 24px; }
+    .quote-block { padding: 16px 20px; background: white; border: var(--panel-border); box-shadow: var(--shadow); margin-bottom: 32px; }
+    .quote-block blockquote { font-size: 16px; font-style: italic; color: var(--ink); line-height: 1.6; margin-bottom: 8px; }
+    .quote-author { font-size: 13px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+
+    /* FAQ */
+    .faq-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; border: var(--panel-border); }
+    .faq-item { padding: 28px 32px; background: white; border: 1px solid #e5e5e5; transition: background 0.15s; }
+    .faq-item:hover { background: var(--warm); }
+    .faq-item h4 { font-family: 'Bangers', cursive; font-size: 20px; letter-spacing: 1px; margin-bottom: 10px; }
+    .faq-item p { font-size: 14px; color: #666; line-height: 1.6; font-weight: 300; }
+
+    /* CTA */
+    .cta-section { background: var(--yellow); border-top: var(--panel-border); border-bottom: var(--panel-border); padding: 80px 40px; text-align: center; position: relative; z-index: 1; overflow: hidden; }
+    .cta-section::before { content: 'WOW! POW! BAM!'; position: absolute; font-family: 'Bangers', cursive; font-size: 180px; color: rgba(0,0,0,0.05); white-space: nowrap; top: 50%; left: 50%; transform: translate(-50%,-50%); letter-spacing: 20px; pointer-events: none; }
+    .cta-section h2 { font-size: clamp(48px,6vw,80px); margin-bottom: 20px; position: relative; }
+    .cta-section p { font-size: 18px; color: #444; margin-bottom: 40px; font-weight: 300; position: relative; }
+    .cta-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; position: relative; }
+
+    /* FOOTER */
+    footer { background: var(--ink); color: var(--cream); padding: 60px 40px 32px; position: relative; z-index: 1; }
+    .footer-grid { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; padding-bottom: 48px; border-bottom: 1px solid rgba(255,255,255,0.15); margin-bottom: 32px; }
+    .footer-brand .nav-logo { display: block; margin-bottom: 16px; font-size: 32px; }
+    .footer-brand p { font-size: 14px; color: #aaa; line-height: 1.6; font-weight: 300; }
+    .footer-col h5 { font-family: 'Bangers', cursive; font-size: 18px; letter-spacing: 2px; margin-bottom: 16px; color: var(--yellow); }
+    .footer-col ul { list-style: none; }
+    .footer-col li { padding: 4px 0; }
+    .footer-col a { font-size: 14px; color: #aaa; text-decoration: none; font-weight: 300; transition: color 0.2s; }
+    .footer-col a:hover { color: var(--cream); }
+    .footer-bottom { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #666; }
+    .footer-bottom a { color: #666; text-decoration: none; }
+    .social-icons { display: flex; gap: 10px; margin-bottom: 16px; }
+    .social-icon { display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.25); border-radius: 4px; color: white; text-decoration: none; font-size: 16px; transition: background 0.2s, color 0.2s; }
+    .social-icon:hover { background: rgba(247,201,72,0.25); }
+
+    /* RESPONSIVE */
+    @media (max-width: 900px) {
+      .hero { grid-template-columns: 1fr; padding: 100px 24px 60px; gap: 40px; }
+      .hero-right { order: -1; }
+      .steps-grid, .products-grid, .styles-grid, .faq-grid { grid-template-columns: 1fr; }
+      .step:not(:last-child) { border-right: none; border-bottom: var(--panel-border); }
+      .sample-inner { grid-template-columns: 1fr; gap: 40px; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+      nav { padding: 0 24px; }
+      .nav-links { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="#" class="nav-logo-img"><img src="panelmystory-icon.png" alt="Panel My Story" style="height:40px;width:auto;display:block;"></a>
+    <ul class="nav-links">
+      <li><a href="#how-it-works">How It Works</a></li>
+      <li><a href="#products">Products</a></li>
+      <li><a href="#styles">Styles</a></li>
+      <li><a href="#faq">FAQ</a></li>
+      <li><a href="https://panelmystory.etsy.com" target="_blank" class="nav-cta">Order Now →</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section>
+    <div class="hero">
+      <div class="hero-left">
+        <div class="hero-badge">Custom Comic Art Studio</div>
+        <h1>YOUR LIFE<br><span class="line-red">IN COMIC</span><br><span class="line-blue">PANELS.</span></h1>
+        <p class="hero-sub">We turn your real photos and memories into <strong>professional, personalized comic books</strong> — for families, couples, pets, and adventures. The perfect gift that no one else can give.</p>
+        <div class="hero-buttons">
+          <a href="https://panelmystory.etsy.com" target="_blank" class="btn-primary">Order on Etsy →</a>
+          <a href="#how-it-works" class="btn-secondary">See How It Works</a>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="hero-comic-frame">
+          <span class="sfx-float sfx-1">WOW!</span>
+          <span class="sfx-float sfx-2">POW!</span>
+          <span class="sfx-float sfx-3">EPIC!</span>
+          <img src="cover.jpeg" alt="Pirates of Ribbit Cove" class="hero-cover-img">
+          <div class="hero-cover-tag">✦ REAL EXAMPLE ✦</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section id="how-it-works" class="section">
+    <div class="section-header">
+      <p class="section-label">The Process</p>
+      <h2>HOW IT WORKS</h2>
+      <p class="section-sub">Three simple steps from photos to finished comic.</p>
+    </div>
+    <div class="steps-grid">
+      <div class="step">
+        <div class="step-number">01</div>
+        <div class="step-icon">📋</div>
+        <h3>TELL YOUR STORY</h3>
+        <p>Fill out our simple intake form. Share your key moments, upload your photos, and choose your comic style. Takes less than 5 minutes.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">02</div>
+        <div class="step-icon">🎨</div>
+        <h3>WE CREATE IT</h3>
+        <p>Our studio transforms your photos and memories into a fully designed comic with custom panels, captions, and speech bubbles.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">03</div>
+        <div class="step-icon">🎉</div>
+        <h3>YOU TREASURE IT</h3>
+        <p>Receive your high-resolution comic PDF within 7 days. Print it, frame it, or keep it digital forever. One revision included.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRODUCTS -->
+  <section id="products" style="background:var(--warm);border-top:var(--panel-border);border-bottom:var(--panel-border);padding:100px 40px;position:relative;z-index:1;">
+    <div style="max-width:1200px;margin:0 auto;">
+      <div class="section-header">
+        <p class="section-label">Pricing</p>
+        <h2>PICK YOUR PANEL</h2>
+        <p class="section-sub">Every order includes one revision and a high-res print-ready PDF.</p>
+      </div>
+      <div class="products-grid">
+        <div class="product-card">
+          <div class="product-header">
+            <div class="product-icon">🖼️</div>
+            <h3>COMIC COVER</h3>
+            <p>A stunning single-page cover featuring your family, pet, or moment. Perfect for framing or sharing.</p>
+          </div>
+          <div class="product-price"><span class="price-amount">$35</span><span class="price-label">digital PDF</span></div>
+          <ul class="product-features">
+            <li>1 custom designed cover</li>
+            <li>Your photos + our artistry</li>
+            <li>Choice of 4 visual styles</li>
+            <li>Print-ready high resolution</li>
+            <li>Delivered in 5–7 days</li>
+          </ul>
+          <div class="product-footer"><a href="https://panelmystory.etsy.com" class="btn-full">Order on Etsy →</a></div>
+        </div>
+        <div class="product-card" style="border-color:var(--red);">
+          <div class="product-tag">Most Popular</div>
+          <div class="product-header">
+            <div class="product-icon">📖</div>
+            <h3>ONE-PAGE COMIC</h3>
+            <p>A complete single-page comic strip telling your story in 4–6 panels. A gift they'll never forget.</p>
+          </div>
+          <div class="product-price"><span class="price-amount">$55</span><span class="price-label">digital PDF</span></div>
+          <ul class="product-features">
+            <li>1 full comic page (4–6 panels)</li>
+            <li>Custom story narrative</li>
+            <li>Speech bubbles + captions</li>
+            <li>Choice of 4 visual styles</li>
+            <li>Print-ready high resolution</li>
+            <li>Delivered in 7 days</li>
+          </ul>
+          <div class="product-footer"><a href="https://panelmystory.etsy.com" class="btn-full featured-btn">Order on Etsy →</a></div>
+        </div>
+        <div class="product-card">
+          <div class="product-header">
+            <div class="product-icon">📚</div>
+            <h3>STORY CHAPTER</h3>
+            <p>A full 3–4 page comic book chapter. Your most meaningful moments turned into a complete story arc.</p>
+          </div>
+          <div class="product-price"><span class="price-amount">$115</span><span class="price-label">digital PDF</span></div>
+          <ul class="product-features">
+            <li>3–4 full comic pages</li>
+            <li>Complete story arc</li>
+            <li>Custom cover included</li>
+            <li>Speech bubbles + captions + SFX</li>
+            <li>Choice of 4 visual styles</li>
+            <li>Rush delivery available (+$25)</li>
+          </ul>
+          <div class="product-footer"><a href="https://panelmystory.etsy.com" class="btn-full">Order on Etsy →</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STYLES -->
+  <div id="styles" class="styles-strip">
+    <div class="section-header" style="max-width:1200px;margin:0 auto 48px;">
+      <p class="section-label">Visual Styles</p>
+      <h2 style="color:var(--cream);">FOUR ICONIC STYLES</h2>
+      <p class="section-sub">Each order can be created in any of our four signature visual styles.</p>
+    </div>
+    <div class="styles-grid">
+      <div class="style-card"><div class="style-card-emoji">✨</div><h4>MODERN CLEAN</h4><p>Crisp, bright, and contemporary. Perfect for families and everyday stories.</p><div class="style-dot" style="background:#64b5f6;"></div></div>
+      <div class="style-card"><div class="style-card-emoji">📰</div><h4>VINTAGE GOLDEN AGE</h4><p>Rich halftones and retro charm. Nostalgic and timeless.</p><div class="style-dot" style="background:#f7c948;"></div></div>
+      <div class="style-card"><div class="style-card-emoji">⚡</div><h4>HEROIC BOLD</h4><p>High contrast, dramatic shadows, saturated color. Epic stories demand this.</p><div class="style-dot" style="background:#e8392a;"></div></div>
+      <div class="style-card"><div class="style-card-emoji">🌸</div><h4>SOFT STORYBOOK</h4><p>Pastel tones and gentle lines. Warm, cozy, perfect for pets and little ones.</p><div class="style-dot" style="background:#f48fb1;"></div></div>
+    </div>
+  </div>
+
+  <!-- SAMPLE / CAROUSEL -->
+  <section class="sample-section">
+    <div class="sample-inner">
+
+      <!-- Radio inputs MUST be siblings of .carousel-wrap for CSS ~ selectors to work -->
+      <input type="radio" name="slide" id="s1" checked hidden>
+      <input type="radio" name="slide" id="s2" hidden>
+      <input type="radio" name="slide" id="s3" hidden>
+      <input type="radio" name="slide" id="s4" hidden>
+      <input type="radio" name="slide" id="s5" hidden>
+      <input type="radio" name="slide" id="s6" hidden>
+
+      <div class="carousel-wrap">
+        <div class="carousel-strip">⭐ REAL EXAMPLE: PIRATES OF RIBBIT COVE ⭐</div>
+        <div class="carousel-stage">
+          <div class="css-track">
+            <div class="css-slide"><img src="comic-cover.jpeg" alt="Cover"><div class="slide-label">Cover</div></div>
+            <div class="css-slide"><img src="page-1.jpeg" alt="Page 1"><div class="slide-label">Page 1: The Great Snack Heist</div></div>
+            <div class="css-slide"><img src="page-2.jpeg" alt="Page 2"><div class="slide-label">Page 2: Setting Sail</div></div>
+            <div class="css-slide"><img src="page-3.jpeg" alt="Page 3"><div class="slide-label">Page 3: Snack Tooth Island</div></div>
+            <div class="css-slide"><img src="page-4.jpeg" alt="Page 4"><div class="slide-label">Page 4: The Golden Pretzel</div></div>
+            <div class="css-slide"><img src="page-5.jpeg" alt="Page 5"><div class="slide-label">Page 5: The Great Snack Recovery</div></div>
+          </div>
+        </div>
+        <div class="css-nav">
+          <!-- Prev buttons -->
+          <label for="s6" class="nav-s1">&#8592;</label>
+          <label for="s1" class="nav-s2">&#8592;</label>
+          <label for="s2" class="nav-s3">&#8592;</label>
+          <label for="s3" class="nav-s4">&#8592;</label>
+          <label for="s4" class="nav-s5">&#8592;</label>
+          <label for="s5" class="nav-s6">&#8592;</label>
+          <div class="css-dots">
+            <label for="s1" class="css-dot dot-1"></label>
+            <label for="s2" class="css-dot dot-2"></label>
+            <label for="s3" class="css-dot dot-3"></label>
+            <label for="s4" class="css-dot dot-4"></label>
+            <label for="s5" class="css-dot dot-5"></label>
+            <label for="s6" class="css-dot dot-6"></label>
+          </div>
+          <!-- Next buttons -->
+          <label for="s2" class="nav-s1">&#8594;</label>
+          <label for="s3" class="nav-s2">&#8594;</label>
+          <label for="s4" class="nav-s3">&#8594;</label>
+          <label for="s5" class="nav-s4">&#8594;</label>
+          <label for="s6" class="nav-s5">&#8594;</label>
+          <label for="s1" class="nav-s6">&#8594;</label>
+        </div>
+        <div class="carousel-footer">PIRATES OF RIBBIT COVE — ISSUE #01 · A Panel My Story Comic</div>
+      </div>
+
+      <div class="sample-text">
+        <p class="section-label">Real Stories, Real Magic</p>
+        <h2>MEMORIES THAT LAST FOREVER</h2>
+        <p>We turned one family's pirate-obsessed toddler into the hero of his very own comic book — complete with mom, dad, and the family dog on an epic adventure.</p>
+        <div class="quote-block">
+          <blockquote>"My son reads it every single night before bed. His face when he first saw himself as a pirate captain — I'll never forget it. Worth every penny."</blockquote>
+          <span class="quote-author">— Parent, Walnut Creek CA</span>
+        </div>
+        <a href="https://panelmystory.etsy.com" class="btn-primary">Create Your Story →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="section">
+    <div class="section-header">
+      <p class="section-label">Questions</p>
+      <h2>FREQUENTLY ASKED</h2>
+    </div>
+    <div class="faq-grid">
+      <div class="faq-item"><h4>WHAT DO I NEED TO SUBMIT?</h4><p>Just 3–10 photos and a quick description of the key moments you want captured. We handle everything else from story to panels.</p></div>
+      <div class="faq-item"><h4>HOW LONG DOES IT TAKE?</h4><p>Standard delivery is 7–10 days. Rush delivery (3 days) is available for an additional $25 at checkout.</p></div>
+      <div class="faq-item"><h4>WHAT DO I RECEIVE?</h4><p>A high-resolution print-ready PDF at 300 DPI — suitable for professional printing up to 18×24 inches, or beautiful on any screen.</p></div>
+      <div class="faq-item"><h4>CAN I REQUEST REVISIONS?</h4><p>Every order includes one round of minor revisions — text changes, panel swaps, or small adjustments. Additional revisions available.</p></div>
+      <div class="faq-item"><h4>WHAT THEMES DO YOU COVER?</h4><p>Parents & family life, travel adventures, pets, birthdays, anniversaries, pregnancy announcements — if it's a story, we can panel it.</p></div>
+      <div class="faq-item"><h4>CAN I GET IT PRINTED?</h4><p>We deliver digital files optimized for printing. We recommend services like Artifact Uprising, Printful, or your local print shop.</p></div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <h2>READY TO TELL YOUR STORY?</h2>
+    <p>Order today and receive your custom comic within 7 days. Prices start at $35.</p>
+    <div class="cta-buttons">
+      <a href="https://panelmystory.etsy.com" target="_blank" class="btn-primary" style="font-size:18px;padding:20px 48px;">Order on Etsy →</a>
+      <a href="/cdn-cgi/l/email-protection#6a1a0b040f060713191e0518132a0d070b030644090507" class="btn-secondary" style="font-size:18px;padding:20px 48px;">Ask a Question</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#"><img src="panelmystory-logo.png" alt="Panel My Story" style="height:90px;width:auto;display:block;margin-bottom:16px;opacity:0.92;border-radius:4px;"></a>
+        <p>Turning real memories into custom comic books. Based in the San Francisco Bay Area, serving customers worldwide.</p>
+      </div>
+      <div class="footer-col">
+        <h5>PRODUCTS</h5>
+        <ul>
+          <li><a href="#">Comic Cover — $35</a></li>
+          <li><a href="#">One-Page Comic — $55</a></li>
+          <li><a href="#">Story Chapter — $115</a></li>
+          <li><a href="#">Rush Delivery +$25</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>THEMES</h5>
+        <ul>
+          <li><a href="#">Family Stories</a></li>
+          <li><a href="#">Travel Adventures</a></li>
+          <li><a href="#">Pet Comics</a></li>
+          <li><a href="#">Anniversaries</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>CONNECT</h5>
+        <div class="social-icons">
+          <a href="https://www.instagram.com/panelmystory" target="_blank" class="social-icon" title="Instagram">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+          </a>
+          <a href="https://www.facebook.com/profile.php?id=61585004156967" target="_blank" class="social-icon" title="Facebook">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          </a>
+          <a href="https://panelmystory.etsy.com" target="_blank" class="social-icon" title="Etsy Shop">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M19.5 12H21v-1.5h-1.5v-3H21V6h-1.5V4.5A1.5 1.5 0 0 0 18 3H6a1.5 1.5 0 0 0-1.5 1.5V6H3v1.5h1.5v3H3V12h1.5v3H3v1.5h1.5V18A1.5 1.5 0 0 0 6 19.5h12a1.5 1.5 0 0 0 1.5-1.5v-1.5H21V15h-1.5v-3zM9 15.75H7.5v-7.5H9V9h4.5v1.5H9v1.5h3V13.5H9v2.25zm7.5 0H12v-1.5h3v-1.5h-3v-1.5h3V9.75h-3V8.25h4.5v7.5z"/></svg>
+          </a>
+        </div>
+        <ul>
+          <li><a href="https://panelmystory.etsy.com" target="_blank">Etsy Shop</a></li>
+          <li><a href="https://www.instagram.com/panelmystory" target="_blank">Instagram</a></li>
+          <li><a href="https://www.facebook.com/profile.php?id=61585004156967" target="_blank">Facebook</a></li>
+          <li><a href="/cdn-cgi/l/email-protection#92e2f3fcf7feffebe1e6fde0ebd2f5fff3fbfebcf1fdff"><span class="__cf_email__" data-cfemail="6414050a0108091d17100b161d240309050d084a070b09">[email&#160;protected]</span></a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+    

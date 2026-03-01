@@ -25,7 +25,7 @@
 
     /* NAV */
     nav { position: fixed; top: 0; width: 100%; z-index: 100; background: var(--cream); border-bottom: var(--panel-border); padding: 0 40px; display: flex; align-items: center; justify-content: space-between; height: 64px; }
-    .nav-logo { font-family: 'Bangers', cursive; font-size: 28px; letter-spacing: 2px; color: var(--ink); text-decoration: none; }
+    .nav-logo { font-family: 'Bangers', cursive; font-size: 28px; letter-spacing: 2px; color: var(--ink); text-decoration: none; display: flex; align-items: center; gap: 10px; }
     .nav-logo span { color: var(--red); }
     .nav-links { display: flex; gap: 32px; list-style: none; }
     .nav-links a { font-size: 14px; font-weight: 600; text-decoration: none; color: var(--ink); transition: color 0.2s; }
@@ -213,7 +213,7 @@
 <body>
 
   <nav>
-    <a href="#" class="nav-logo-img"><img src="panelmystory-icon.png" alt="Panel My Story" style="height:40px;width:auto;display:block;"></a>
+    <a href="#" class="nav-logo">PANEL<span>MY</span>STORY</a>
     <ul class="nav-links">
       <li><a href="#how-it-works">How It Works</a></li>
       <li><a href="#products">Products</a></li>
@@ -449,7 +449,7 @@
   <footer>
     <div class="footer-grid">
       <div class="footer-brand">
-        <a href="#"><img src="panelmystory-logo.png" alt="Panel My Story" style="height:90px;width:auto;display:block;margin-bottom:16px;opacity:0.92;border-radius:4px;"></a>
+        <a href="#" class="nav-logo" style="color:var(--yellow);font-size:32px;margin-bottom:16px;">PANEL <span style="color:var(--red);">MY</span> STORY</a>
         <p>Turning real memories into custom comic books. Based in the San Francisco Bay Area, serving customers worldwide.</p>
       </div>
       <div class="footer-col">
